@@ -1,48 +1,55 @@
-# Composer - Include Files Plugin
+# LogRequestsMiddleware
 
-When using the Composer Autoloader if you need project files included prior to files autoloaded by any of your dependencies your out of luck. No longer!
+LogRequestsMiddleware - это middleware для логирования входящих HTTP-запросов в Laravel-приложении.
 
-## Installation
+## Установка
+
+### Установите пакет с помощью Composer:
 
 ```bash
-composer require 0.0.0/composer-include-files
+    composer require ioj4z/log-requests-middleware
+```
+#### После успешной установки пакета необходимо зарегистрировать middleware в вашем Laravel-приложении.
+
+### Использование
+
+#### Регистрация middleware:
+    Откройте файл app/Http/Kernel.php.
+    Добавьте ваш middleware в свойство $middleware, чтобы он был включен в глобальный стек middleware:
+
+  ``` php
+        protected $middleware = [
+        // Другие middleware...
+        \ioj4z\LogRequestsMiddleware\LogRequestsMiddleware::class,
+    ];
+  ```
+#### Создание канала для логирования HTTP-запросов
+
+Для того чтобы сохранять HTTP-запросы в отдельный лог-файл, необходимо создать специальный канал в вашем файле конфигурации логирования.
+
+Откройте файл `config/logging.php` в вашем Laravel-приложении, и добавьте следующий код в раздел `'channels'`:
+
+```php
+'request' => [
+    'driver' => 'daily',
+    'path' => storage_path('logs/request.log'),
+    'level' => env('LOG_LEVEL', 'debug'),
+    'days' => 14,
+],
 ```
 
-## Usage
+### Использование middleware в маршрутах:
 
-Just add the files you need included using `"include_files"` and they will be include prior to any files included by your dependencies.
+Вы можете назначить ваш middleware к определенным маршрутам или группам маршрутов в файле routes/web.php или routes/api.php.
 
-```json
-// composer.json (project)
-{
-    "extra": {
-        "include_files": [
-            "/path/to/file/you/want/to/include",
-            "/path/to/another/file/you/want/to/include"
-        ]
-    },
-}
-```
+#### Пример назначения middleware к группе маршрутов:
 
-## Specific Use Case
+ ``` php
+        Route::middleware([\ioj4z\LogRequestsMiddleware\LogRequestsMiddleware::class])->group(function () {
+            // Здесь определите маршруты, для которых нужно использовать middleware
+        });
+ ```
 
-A good example of where this is required is when overriding helpers provided by Laravel.
+## Лицензия
 
-In the past simply modifying `bootstrap/autoload.php` to include helpers was sufficient. However new versions of PHPUnit include the Composer Autoloader prior to executing the PHPUnit bootstrap file. Consequently this method of overriding helpers is no longer viable as it will trigger a fatal error when your bootstrap file is included.
-
-But now we can use *Composer - Include Files Plugin* to have Composer include the files in the necessary order.
-
-```json
-// composer.json (project)
-{
-    "require": {
-        "laravel/framework": "^5.2",
-        "funkjedi/composer-include-files": "^1.0",
-    },
-    "extra": {
-        "include_files": [
-            "app/helpers.php"
-        ]
-    },
-}
-```
+MIT

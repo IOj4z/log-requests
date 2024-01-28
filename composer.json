@@ -1,0 +1,24 @@
+{
+    "name": "ioj4z/log-requests",
+    "description": "Middleware for logging requests in Laravel",
+    "type": "library",
+    "keywords": ["laravel", "middleware", "logging"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Alisher",
+            "email": "media.art.press2@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^7.2",
+        "illuminate/support": "^8.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "ioj4z\\LogRequests\\": "app/"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
